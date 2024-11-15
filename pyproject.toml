@@ -3,11 +3,11 @@ requires = ['pip>=20.3', 'setuptools>=62', 'wheel']
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biliup"
-authors = [{ name = "ForgQi" }]
+name = "xueba-biliup"
+authors = [{ name = "xueba" }]
 description = "stream download and upload"
 keywords = ["bilibili douyu huya"]
-urls = { Homepage = "https://github.com/ForgQi/bilibiliupload" }
+urls = { Homepage = "https://github.com/xueba0458/biliup" }
 requires-python = ">= 3.8"
 dependencies = [
     "tomli-w>=1.0.0",
