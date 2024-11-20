@@ -1,9 +1,13 @@
+import os
 import copy
 import json
 import logging
+import MySQLdb
+
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
+from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, ForeignKey, JSON, TEXT, MetaData
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,6 +15,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 
 logger = logging.getLogger('biliup')
 
+# 从运行目录加载.env文件
+load_dotenv(Path(os.getcwd()) / '.env')
 
 # FIXME: 不应该在 stop 和 --version 时创建文件夹
 def get_path(*other):
@@ -22,11 +28,35 @@ def get_path(*other):
     return str(dir_path.joinpath(*other))
 
 
-DB_PATH = get_path('data.sqlite3')
-DB_URL = f"sqlite:///{DB_PATH}"  # 数据库 URL, 使用默认 DBAPI
+# 获取配置，如果.env中没有配置则使用默认的SQLite
+DB_TYPE = os.getenv('DB_TYPE', 'sqlite')  # 默认使用sqlite
 
+if DB_TYPE.lower() == 'mysql':
+    # MySQL配置
+    DB_USER = os.getenv('DB_USER', 'root')
+    DB_PASS = os.getenv('DB_PASS', '')
+    DB_HOST = os.getenv('DB_HOST', 'localhost')
+    DB_PORT = os.getenv('DB_PORT', '3306')
+    DB_NAME = os.getenv('DB_NAME', 'biliup')
+    
+    DB_URL = f"mysql+mysqlclient://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    connect_args = {
+        'charset': 'utf8mb4'
+    }
+else:
+    # 保持原有的SQLite配置
+    DB_PATH = get_path('data.sqlite3')
+    DB_URL = f"sqlite:///{DB_PATH}"
+    connect_args = {
+        "check_same_thread": False
+    }
+
+# 创建引擎
 engine = create_engine(
-    DB_URL, connect_args={"check_same_thread": False}
+    DB_URL,
+    connect_args=connect_args,
+    pool_recycle=3600,
+    pool_pre_ping=True
     # echo=True,  # 显示执行的 SQL 记录, 仅调试用, 发布前请注释
 )
 
