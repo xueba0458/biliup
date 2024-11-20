@@ -15,7 +15,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from alembic import command, config
 
 from .models import (
-    DB_PATH,
     engine,
     BaseModel,
     StreamerInfo,
