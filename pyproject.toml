@@ -3,7 +3,7 @@ requires = ['pip>=20.3', 'setuptools>=62', 'wheel']
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "xueba-biliup"
+name = "xueba-biliup-mysql"
 authors = [{ name = "xueba" }]
 description = "stream download and upload"
 keywords = ["bilibili douyu huya"]
